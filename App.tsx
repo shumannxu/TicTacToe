@@ -25,9 +25,7 @@ import LottieView from "lottie-react-native";
 
 export default function App() {
   const [board, setBoard] = useState(Array(9).fill(null));
-  const [isXNext, setIsXNext] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
-  const [oppUserId, setOppUserId] = useState<string | null>(null);
   const [turn, setTurn] = useState<UserId | null>(null);
   const [player1, setPlayer1] = useState<UserId | null>(null);
   const [player2, setPlayer2] = useState<UserId | null>(null);
@@ -126,6 +124,11 @@ export default function App() {
   const deleteExisting = useCallback(async () => {
     if (gameId) {
       await deleteGame(gameId);
+      setGameId(null);
+      setTurn(null);
+      setPlayer1(null);
+      setPlayer2(null);
+      setOutcome(null);
     }
     setLoadingPlayer(false);
   }, [gameId]);
@@ -147,6 +150,7 @@ export default function App() {
         <Modal animationType="slide" transparent={true} visible={loadingPlayer}>
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
+              <Text style={styles.waitStyle}>Waiting for Player</Text>
               <ActivityIndicator size="large" color="#0000ff" />
               <TouchableOpacity
                 style={styles.buttonClose}
@@ -181,9 +185,11 @@ export default function App() {
           numColumns={3}
         />
       </View>
-      <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
-        <Text style={styles.resetButtonText}>Reset Game</Text>
-      </TouchableOpacity>
+      {(outcome === GameOutcome.TIE || outcome === GameOutcome.WIN) && (
+        <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
+          <Text style={styles.resetButtonText}>Reset Game</Text>
+        </TouchableOpacity>
+      )}
       <TouchableOpacity style={styles.resetButton} onPress={makeGame}>
         <Text style={styles.resetButtonText}>Create Game</Text>
       </TouchableOpacity>
@@ -277,7 +283,7 @@ const styles = StyleSheet.create({
     marginTop: 22,
   },
   modalView: {
-    margin: 20,
+    margin: 10,
     backgroundColor: "white",
     borderRadius: 20,
     padding: 35,
@@ -292,13 +298,18 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   buttonClose: {
-    backgroundColor: "#2196F3",
+    backgroundColor: "black",
     borderRadius: 20,
     padding: 10,
     elevation: 2,
   },
   textStyle: {
     color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  waitStyle: {
+    color: "black",
     fontWeight: "bold",
     textAlign: "center",
   },
