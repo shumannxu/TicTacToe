@@ -1,4 +1,7 @@
 export type GameId = string;
+export type MessageId = string;
+export type ChatId = string;
+
 export type UserId = string;
 export type BoardValue = "X" | "O" | null;
 
@@ -24,3 +27,18 @@ export enum GameOutcome {
   TIE = "TIE",
   IN_PROGRESS = "IN_PROGRESS",
 }
+
+export type Chat = {
+  users: UserId[];
+  chatId: ChatId;
+  name: string;
+};
+
+export type Message = {
+  messageId: MessageId;
+  timestamp: Date;
+  sender: UserId;
+  value: string;
+  seen?: boolean;
+  chatId: ChatId;
+};
